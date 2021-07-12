@@ -1,3 +1,5 @@
+require "faker"
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 #
@@ -5,6 +7,17 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+names = ['Rae', 'Tobin']
+names.each do |name|
+  user=User.new(
+    name: name,
+    email: Faker::Internet.email,
+    password: Faker::Internet.password
+  )
+
+  user.save!
+end
 
 dogs = [
   {
@@ -17,7 +30,7 @@ dogs = [
   },
   {
     name: 'Jax',
-    description: '',
+    description: ''
   },
   {
     name: 'Jiro',
@@ -50,7 +63,10 @@ dogs = [
 ]
 
 dogs.each do |dog|
-  dog = Dog.find_or_create_by(name: dog[:name], description: dog[:description])
+  dog = Dog.find_or_create_by!(
+    name: dog[:name],
+    description: dog[:description]
+  )
   directory_name = File.join(Rails.root, 'db', 'seed', "#{dog[:name].downcase}", "*")
 
   Dir.glob(directory_name).each do |filename|
@@ -60,3 +76,9 @@ dogs.each do |dog|
     end
   end
 end
+
+dogs1 = Dog.all.to_a
+dogs2 = dogs1.slice!(0, 5)
+
+User.first.update(dogs: dogs1)
+User.last.update(dogs: dogs2)
